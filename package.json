@@ -1,0 +1,24 @@
+{
+  "name": "aegisvault-ai",
+  "version": "2.0.0",
+  "description": "Next-Generation Zero-Trust Blockchain dApp with Client-Side Post-Quantum Cryptography & AI Security Auditing",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y serve . -p 8080",
+    "dev": "npx -y http-server . -p 8080 -c-1"
+  },
+  "keywords": [
+    "blockchain",
+    "zero-trust",
+    "post-quantum-cryptography",
+    "pqc",
+    "wots-plus",
+    "ring-lwe",
+    "ai-auditor",
+    "solidity",
+    "web-crypto-api",
+    "reentrancy-exploit"
+  ],
+  "author": "AegisVault AI Team",
+  "license": "MIT"
+}

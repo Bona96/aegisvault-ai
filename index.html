@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisVault AI - Post-Quantum Zero-Trust Portal</title>
+  <meta name="description" content="Decentralized Zero-Trust Asset Vault featuring lattice Ring-LWE, WOTS+ quantum-resistant transactions, and gamified reentrancy auditor.">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- App Header -->
+  <header>
+    <div class="logo">
+      <div class="logo-icon">A</div>
+      <span>AegisVault <span style="color: var(--clr-ai);">AI</span> <span style="font-size: 0.65rem; border: 1px solid var(--clr-accent); color: var(--clr-accent); padding: 0.1rem 0.4rem; border-radius: 4px; margin-left: 0.5rem; letter-spacing: 0.05em;">PQC v2</span></span>
+    </div>
+
+    <!-- Quantum Protection Control Panel -->
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+      <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; background: rgba(99, 102, 241, 0.1); padding: 0.35rem 0.85rem; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.2);">
+        <label class="input-label" for="pqc-mode-switch" style="margin-bottom: 0; color: var(--text-primary); cursor: pointer; font-size: 0.8rem;">Hybrid PQC Mode</label>
+        <input type="checkbox" id="pqc-mode-switch" style="cursor: pointer; accent-color: var(--clr-accent);">
+      </div>
+      <div class="connection-status">
+        <div class="status-dot"></div>
+        <span id="connection-text">SentryChain Mainnet (PQC Active)</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-container">
+    
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-group">
+        <div class="nav-group-title">Portal Menu</div>
+        <div class="nav-item active" id="nav-dashboard" data-tab="tab-dashboard">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Dashboard
+        </div>
+        <div class="nav-item" id="nav-wallet" data-tab="tab-wallet">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="10" x2="12" y2="10"/></svg>
+          Key Management (PQC)
+        </div>
+        <div class="nav-item" id="nav-auditor" data-tab="tab-auditor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          AI Solidity Auditor
+        </div>
+        <div class="nav-item" id="nav-hacking" data-tab="tab-hacking">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          Reentrancy Hack Arena
+        </div>
+        <div class="nav-item" id="nav-explorer" data-tab="tab-explorer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+          Block Explorer
+        </div>
+        <div class="nav-item" id="nav-zkp" data-tab="tab-zkp">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          ZK Proof & Lattice KEM
+        </div>
+      </div>
+
+      <!-- Quick Stats Card -->
+      <div class="glass-card" style="margin-top: auto; padding: 1rem; border-color: rgba(99, 102, 241, 0.15); background: rgba(13, 20, 35, 0.3);">
+        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Quantum Cryptography</div>
+        <div style="font-size: 1.25rem; font-weight: 700; color: var(--clr-accent); display: flex; align-items: center; gap: 0.5rem; margin-top: 0.25rem;" id="pqc-status-badge">
+          ECDSA
+          <span style="font-size: 0.7rem; padding: 0.1rem 0.4rem; background: rgba(255, 255, 255, 0.05); border-radius: 4px; font-weight: 500; color: var(--text-secondary);">CLASSICAL</span>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 0.5rem; line-height: 1.3;" id="pqc-status-desc">
+          Using standard ECDSA keys. Enable PQC in the header to activate hybrid WOTS+ quantum protection.
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main>
+      
+      <!-- Tab 1: Dashboard -->
+      <section id="tab-dashboard" class="tab-content active">
+        <!-- Banner/Headline with Quantum threat meter -->
+        <div class="glass-card dashboard-layout" style="grid-template-columns: 3fr 1fr; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(239, 68, 68, 0.03) 100%); align-items: center;">
+          <div>
+            <h1 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">AI-Driven Portfolio & Security Dashboard</h1>
+            <p style="color: var(--text-secondary); font-size: 0.9rem;">
+              Protecting digital wealth from classical exploits and quantum decryption threats. Deriving zero-trust local keys and running post-quantum signatures dynamically.
+            </p>
+          </div>
+          <!-- Threat Gauge -->
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; text-align: center;">
+            <span class="input-label" style="font-size: 0.7rem;">Quantum Threat Level (HNDL)</span>
+            <div style="width: 100%; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; margin: 0.25rem 0; border: 1px solid rgba(255,255,255,0.05);">
+              <div id="quantum-gauge-fill" style="width: 85%; height: 100%; background: linear-gradient(90deg, #f59e0b, #ef4444); transition: var(--transition-smooth);"></div>
+            </div>
+            <strong id="quantum-gauge-text" style="color: var(--clr-danger); font-size: 0.8rem; font-family: var(--font-mono);">CRITICAL (85%)</strong>
+          </div>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="metrics-row">
+          <div class="glass-card metric-card">
+            <span class="input-label">Local Account Balance</span>
+            <div class="metric-val secure" id="wallet-balance-val">0.00 AEGIS</div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="wallet-address-short">Address: None (Initialize Wallet)</span>
+          </div>
+          <div class="glass-card metric-card">
+            <span class="input-label">Staked Assets</span>
+            <div class="metric-val" id="staked-balance-val">0.00 AEGIS</div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="staking-apr-val">APR: 7.4% (AI Optimized)</span>
+          </div>
+          <div class="glass-card metric-card">
+            <span class="input-label">Estimated AI Yield Rate</span>
+            <div class="metric-val ai" id="optimized-yield-val">7.4% APR</div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="yield-risk-profile">Profile: Moderate / Stable</span>
+          </div>
+          <div class="glass-card metric-card">
+            <span class="input-label">Zero-Trust Network Status</span>
+            <div class="metric-val" style="color: var(--clr-secure);" id="network-blocks-val">1 Blocks</div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);" id="network-difficulty-val">Difficulty: 3 Leading Zeros</span>
+          </div>
+        </div>
+
+        <!-- Dashboard Multi-column Layout -->
+        <div class="dashboard-layout">
+          <!-- Col 1: Action center -->
+          <div class="glass-card" style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--clr-ai);"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              Cryptographic Transaction Center
+            </div>
+            
+            <!-- Send Transaction Form -->
+            <form id="tx-form" style="display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                  <label class="input-label" for="tx-to">Recipient Wallet Address</label>
+                  <select class="input-field" id="tx-to" required>
+                    <option value="" disabled selected>Select Target Contract or Wallet</option>
+                    <option value="0xStakingContract">0xStakingContract (Staking Portal)</option>
+                    <option value="0xMultiSigVaultContract">0xMultiSigVaultContract (Security Vault)</option>
+                    <option value="0xYieldOptimizerContract">0xYieldOptimizerContract (AI Yield Vault)</option>
+                    <option value="0x9999a8b19d45e678bfd9a8f21919864293f77341">External Client Address (Simulated)</option>
+                  </select>
+                </div>
+                <div class="input-group">
+                  <label class="input-label" for="tx-amount">Amount (AEGIS)</label>
+                  <input type="number" class="input-field" id="tx-amount" placeholder="e.g. 50" min="0.1" step="any" required>
+                </div>
+              </div>
+              <div class="input-group">
+                <label class="input-label" for="tx-password">Sign Transaction: Wallet Master Password</label>
+                <input type="password" class="input-field" id="tx-password" placeholder="Confirm your password to cryptographically sign" required disabled>
+              </div>
+              
+              <!-- Hybrid PQC Signing indicator -->
+              <div style="display: none; background: rgba(168, 85, 247, 0.1); border: 1px solid rgba(168, 85, 247, 0.2); padding: 0.6rem 0.85rem; border-radius: 8px; font-size: 0.75rem; color: #d8b4fe;" id="pqc-signing-alert">
+                🔒 **Hybrid PQC Signing Active**: Transaction payload will be signed with ECDSA AND Winternitz One-Time Signatures (WOTS+).
+              </div>
+
+              <button type="submit" class="btn btn-secure" id="tx-submit-btn" disabled>
+                Sign & Broadcast Transaction
+              </button>
+            </form>
+          </div>
+
+          <!-- Col 2: AI Yield Manager -->
+          <div class="glass-card" style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="card-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--clr-ai);"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              AI Yield Allocation
+            </div>
+            
+            <div class="input-group">
+              <label class="input-label" for="opt-risk">AI Risk Profile</label>
+              <select class="input-field" id="opt-risk">
+                <option value="low">Conservative (Safety First)</option>
+                <option value="medium" selected>Moderate (Balanced Yield)</option>
+                <option value="high">Aggressive (High Yield / Hedged)</option>
+              </select>
+            </div>
+            <div class="input-group">
+              <label class="input-label" for="opt-market">Simulated Market Condition</label>
+              <select class="input-field" id="opt-market">
+                <option value="stable" selected>Stable (Low Volatility)</option>
+                <option value="volatile">Volatile (High Fluctuations)</option>
+              </select>
+            </div>
+            <button type="button" class="btn btn-primary" id="btn-run-allocation">
+              Optimize Allocation
+            </button>
+            
+            <!-- Asset Chart visualization -->
+            <div class="chart-container">
+              <svg class="chart-svg" id="portfolio-chart" viewBox="0 0 200 200"></svg>
+            </div>
+            <div style="font-size: 0.75rem; color: var(--text-secondary); text-align: center;" id="chart-legend">
+              Safe: 40% | Moderate: 50% | Aggressive: 10%
+            </div>
+          </div>
+        </div>
+
+        <!-- Staking / Details dashboard row -->
+        <div class="dashboard-layout">
+          <!-- Solidity / Smart Contract preview -->
+          <div class="glass-card">
+            <div class="card-title">Staking Smart Contract Interface</div>
+            <div style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.4; display: flex; flex-direction: column; gap: 0.5rem;">
+              <p>Staking assets locks them into contract address <code>0xStakingContract</code>. Reward balances accumulate on-chain and are processed after blocks are mined.</p>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="btn btn-secondary" id="btn-quick-stake-50" disabled>Stake 50 AEGIS</button>
+                <button class="btn btn-secondary" id="btn-quick-unstake" disabled>Unstake All</button>
+              </div>
+            </div>
+          </div>
+          <!-- Security checklist -->
+          <div class="glass-card">
+            <div class="card-title">AI Client Security Status</div>
+            <div class="security-list">
+              <div class="sec-item">
+                <div class="sec-status pass" id="sec-wallet-icon">✓</div>
+                <div class="sec-info">
+                  <span class="sec-name">Client Wallet Key Derivation</span>
+                  <span class="sec-desc" id="sec-wallet-desc">Wallet Offline</span>
+                </div>
+              </div>
+              <div class="sec-item">
+                <div class="sec-status pass" id="sec-net-icon">✓</div>
+                <div class="sec-info">
+                  <span class="sec-name">Network Cryptography Validation</span>
+                  <span class="sec-desc" id="sec-quantum-desc">Classical ECDSA signature enforcement</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 2: Key Management / Wallet wizard -->
+      <section id="tab-wallet" class="tab-content">
+        <!-- Default State: Setup Wizard -->
+        <div class="glass-card wallet-wizard" id="wallet-setup-card">
+          <div class="card-title" style="justify-content: center; font-size: 1.4rem;">
+            Initialize Zero-Trust Wallet
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); text-align: center; margin-bottom: 1.5rem;">
+            Configure your client-side keys. AegisVault never sends passwords or mnemonic seeds to any backend server. All encryption is computed using standard Web Crypto algorithms.
+          </p>
+          
+          <div class="input-group">
+            <label class="input-label" for="setup-password">Wallet Master Password</label>
+            <input type="password" class="input-field" id="setup-password" placeholder="Create a strong master password (min 8 chars)" minlength="8">
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <button class="btn btn-secure" id="btn-generate-wallet">
+              Generate New Secure Wallet
+            </button>
+            <div style="text-align: center; font-size: 0.8rem; color: var(--text-muted);">or</div>
+            <div class="input-group">
+              <label class="input-label" for="setup-mnemonic">Restore Wallet via Backup Payload</label>
+              <textarea class="input-field mono" id="setup-mnemonic" placeholder="Paste your encrypted backup JSON payload" rows="2"></textarea>
+            </div>
+            <button class="btn btn-secondary" id="btn-restore-wallet">
+              Restore Wallet
+            </button>
+          </div>
+        </div>
+
+        <!-- Wallet Initialized State (Hidden by default) -->
+        <div class="glass-card" id="wallet-details-card" style="display: none; max-width: 650px; margin: 0 auto; flex-direction: column; gap: 1.5rem;">
+          <div class="card-title" style="color: var(--clr-secure);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            Decentralized Wallet Activated
+          </div>
+
+          <div class="input-group">
+            <span class="input-label">Derived Client Address (SHA-256 Public JWK)</span>
+            <div style="font-family: var(--font-mono); font-size: 0.8rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 6px; border: 1px solid var(--panel-border); word-break: break-all;" id="wallet-address-full">
+              Generating...
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="input-group">
+              <span class="input-label">Key Algorithm</span>
+              <div style="font-size: 0.85rem; font-weight: 600;" id="wallet-algo-display">ECDSA (Curve P-256)</div>
+            </div>
+            <div class="input-group">
+              <span class="input-label">Key Derivation Rounds</span>
+              <div style="font-size: 0.85rem; font-weight: 600;">100,000 PBKDF2 Iterations</div>
+            </div>
+          </div>
+
+          <!-- PQC Key Display -->
+          <div class="glass-card" id="pqc-keys-subcard" style="display: none; background: rgba(168, 85, 247, 0.03); border-color: rgba(168, 85, 247, 0.2);">
+            <div style="font-weight: 600; font-size: 0.9rem; color: var(--clr-accent); margin-bottom: 0.5rem;">
+              Post-Quantum Credentials (WOTS+)
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Derived quantum-safe signature address root (Winternitz hash chains):
+            </p>
+            <div style="font-family: var(--font-mono); font-size: 0.7rem; background: rgba(0,0,0,0.4); padding: 0.5rem; border-radius: 4px; word-break: break-all;" id="wots-pubkey-display">
+              WOTS+ Public Address derived...
+            </div>
+          </div>
+
+          <div class="glass-card" style="background: rgba(239, 68, 68, 0.02); border-color: rgba(239, 68, 68, 0.15);">
+            <div style="font-weight: 600; font-size: 0.9rem; color: var(--clr-danger); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.25rem;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Encrypted Backup Payload
+            </div>
+            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+              This is the client-encrypted JWK private key wallet backup. You can copy this payload to restore this session later using your password.
+            </p>
+            <textarea class="input-field mono" id="wallet-backup-raw" readonly rows="4" style="font-size: 0.7rem; background: rgba(0,0,0,0.5);"></textarea>
+          </div>
+
+          <button class="btn btn-danger" id="btn-purge-wallet">
+            Purge Wallet Session (Zero-Trust Clear)
+          </button>
+        </div>
+      </section>
+
+      <!-- Tab 3: Solidity Auditor -->
+      <section id="tab-auditor" class="tab-content">
+        <div class="glass-card">
+          <h2 class="card-title">AI Smart Contract Auditor Panel</h2>
+          <p class="card-subtitle">Paste your Solidity smart contracts below. The localized AI Agent will execute heuristic audits to detect potential reentrancy attacks, integer overflows, or unchecked values.</p>
+
+          <div class="code-workspace">
+            <!-- Left: Solidity Editor with Highlights overlay container -->
+            <div class="editor-container" style="position: relative;">
+              <div class="editor-controls">
+                <span class="input-label" style="margin-bottom: 0;">Solidity Contract Workspace</span>
+                <select class="editor-select" id="editor-templates">
+                  <option value="secure">Template: Secure Staking (No Vulnerabilities)</option>
+                  <option value="reentrancy">Template: Reentrancy Vulnerable Vault</option>
+                  <option value="txorigin">Template: Insecure tx.origin Auth Wallet</option>
+                </select>
+              </div>
+              
+              <!-- Premium Editor Shell -->
+              <div style="position: relative; flex-grow: 1; display: flex;">
+                <textarea class="solidity-editor" id="solidity-editor-area" spellcheck="false" style="width: 100%; border-radius: 0 0 8px 8px; z-index: 2; background: transparent; position: relative; caret-color: #fff;"></textarea>
+                <!-- Line highlight overlays -->
+                <div id="editor-highlighter-layer" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; padding: 1rem; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.5; color: transparent; white-space: pre-wrap; word-break: break-all; overflow: hidden; z-index: 1;"></div>
+              </div>
+
+              <button class="btn btn-primary" id="btn-run-audit" style="margin-top: 1rem;">
+                Run AI Cybersecurity Audit
+              </button>
+            </div>
+
+            <!-- Right: Audit Results -->
+            <div class="glass-card" style="background: rgba(8, 12, 20, 0.4);">
+              <div class="audit-header">
+                <div style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 0.25rem;">Audit Security Rating</div>
+                <div style="display: flex; align-items: baseline; gap: 0.5rem;">
+                  <span style="font-size: 2.2rem; font-weight: 700; color: var(--clr-secure);" id="audit-score-val">100</span>
+                  <span style="color: var(--text-muted); font-size: 0.9rem;">/ 100</span>
+                </div>
+              </div>
+
+              <div class="audit-results" id="audit-results-list">
+                <!-- Audit items will populate here -->
+                <div class="audit-card secure">
+                  <div class="audit-title">✓ No Vulnerabilities Detected</div>
+                  <div class="audit-desc">Compile or run audit to initiate vulnerability static checks.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 4: Gamified Reentrancy Hacking Arena -->
+      <section id="tab-hacking" class="tab-content">
+        <div class="glass-card">
+          <h2 class="card-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--clr-danger);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Reentrancy Exploitation Hacking Arena
+          </h2>
+          <p class="card-subtitle">
+            Experience how reentrancy attacks work in real-time. Execute an exploit against a vulnerable balance-vault contract, observe the visual stack recursion loop draining the contract balance, and patch it using the Checks-Effects-Interactions pattern.
+          </p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem;">
+            <!-- Victim Vault Contract -->
+            <div class="glass-card" style="border-color: rgba(239, 68, 68, 0.25); background: rgba(239, 68, 68, 0.02);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: #f87171;">Victim Contract: EtherVault.sol</strong>
+                <span style="padding: 0.2rem 0.5rem; background: rgba(239, 68, 68, 0.2); color: var(--clr-danger); font-size: 0.75rem; border-radius: 4px; font-weight: 600;" id="victim-status-tag">VULNERABLE</span>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #cbd5e1; background: #070a13; padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); height: 160px; overflow-y: auto;" id="victim-code-display">
+                <!-- Code text -->
+              </div>
+              <div style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
+                  <span>Vault Liquidity:</span>
+                  <strong id="victim-liquidity-text">500 ETH</strong>
+                </div>
+                <div style="height: 10px; background: #1e293b; border-radius: 5px; overflow: hidden;">
+                  <div id="victim-liquidity-bar" style="width: 100%; height: 100%; background: var(--clr-danger); transition: var(--transition-smooth);"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attacker Contract -->
+            <div class="glass-card" style="border-color: rgba(99, 102, 241, 0.25); background: rgba(99, 102, 241, 0.02);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <strong style="color: var(--clr-ai);">Attacker Contract: ReentrancyAttack.sol</strong>
+                <span style="padding: 0.2rem 0.5rem; background: rgba(99, 102, 241, 0.2); color: var(--clr-ai); font-size: 0.75rem; border-radius: 4px; font-weight: 600;">ATTACK VECTOR</span>
+              </div>
+              <div style="font-family: var(--font-mono); font-size: 0.75rem; color: #cbd5e1; background: #070a13; padding: 0.75rem; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); height: 160px; overflow-y: auto;">
+function fallback() external payable {
+    if (address(victim).balance >= 100 ether) {
+        victim.withdraw(); // RE-ENTER HERE!
+    }
+}</div>
+              <div style="margin-top: 1rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.25rem;">
+                  <span>Attacker Balance:</span>
+                  <strong id="attacker-liquidity-text">0 ETH</strong>
+                </div>
+                <div style="height: 10px; background: #1e293b; border-radius: 5px; overflow: hidden;">
+                  <div id="attacker-liquidity-bar" style="width: 0%; height: 100%; background: var(--clr-ai); transition: var(--transition-smooth);"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Arena Action buttons & stack log -->
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+            <!-- Logs and recursion display -->
+            <div class="glass-card" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <strong>Exploit Call Stack & Call Visualization</strong>
+              <div style="background: #040712; height: 180px; overflow-y: auto; padding: 0.75rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.75rem; color: #e2e8f0; display: flex; flex-direction: column; gap: 0.25rem; border: 1px solid rgba(255,255,255,0.05);" id="hacking-console-logs">
+                <div style="color: var(--text-muted);">Ready to launch attack simulation.</div>
+              </div>
+            </div>
+
+            <!-- Exploit Panel Actions -->
+            <div class="glass-card" style="display: flex; flex-direction: column; gap: 1rem; justify-content: center;">
+              <button class="btn btn-danger" id="btn-trigger-exploit" style="width: 100%;">
+                ⚡ Trigger Reentrancy Exploit
+              </button>
+              <button class="btn btn-secure" id="btn-apply-patch" style="width: 100%;">
+                🛡️ Apply Security Patch
+              </button>
+              <button class="btn btn-secondary" id="btn-reset-hack" style="width: 100%;">
+                Reset Arena
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 5: Blockchain Explorer & Miner -->
+      <section id="tab-explorer" class="tab-content">
+        <!-- Live Block Explorer chain visualization -->
+        <div class="glass-card">
+          <div class="card-title">Local Blockchain Chain visualizer</div>
+          <p class="card-subtitle">Showing live state changes, block headers, transaction count, and target difficulty matching.</p>
+          
+          <div class="blockchain-viz" id="blockchain-chain-row">
+            <!-- Block cards injected here -->
+          </div>
+        </div>
+
+        <!-- Mining Dashboard -->
+        <div class="dashboard-layout">
+          <!-- Miner controller -->
+          <div class="glass-card">
+            <div class="card-title">Proof-of-Work Miner Dashboard</div>
+            <p class="card-subtitle">Accumulate pending transactions inside the mempool. Mine the block to commit them to the decentralized ledger.</p>
+            
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div class="input-group">
+                  <span class="input-label">Mempool Count</span>
+                  <div style="font-size: 1.25rem; font-weight: 600;" id="mempool-count-val">0 Transactions</div>
+                </div>
+                <div class="input-group">
+                  <span class="input-label">Mining Difficulty</span>
+                  <div style="font-size: 1.25rem; font-weight: 600;" id="difficulty-indicator">3 Leading Zeros</div>
+                </div>
+              </div>
+
+              <!-- Miner progress visualizer -->
+              <div id="mining-status-container" style="display: none; background: rgba(0,0,0,0.3); border: 1px solid var(--clr-warning); padding: 0.75rem; border-radius: 8px;">
+                <div style="font-size: 0.75rem; font-weight: bold; color: var(--clr-warning); text-transform: uppercase;">Block Hashing Progress...</div>
+                <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-primary); margin-top: 0.5rem; word-break: break-all;" id="mining-hash-step">
+                  Hash: 000...
+                </div>
+                <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;" id="mining-nonce-step">
+                  Nonce Iteration: 0
+                </div>
+              </div>
+
+              <button class="btn btn-secure" id="btn-mine-block">
+                Start Block Mining Session
+              </button>
+            </div>
+          </div>
+
+          <!-- Pending transactions list -->
+          <div class="glass-card">
+            <div class="card-title">Mempool (Queue)</div>
+            <div class="transaction-list" id="mempool-list">
+              <div style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 2rem;">Mempool is currently empty. Initiate transactions above.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tab 6: ZK Proof & Post-Quantum Lattice KEM -->
+      <section id="tab-zkp" class="tab-content">
+        <!-- ZKP Panel -->
+        <div class="glass-card" style="max-width: 700px; margin: 0 auto 1.5rem auto;">
+          <h2 class="card-title">Zero-Knowledge Proof (ZKP) Verification</h2>
+          <p class="card-subtitle">Verify ownership of the wallet master password using Fiat-Shamir non-interactive cryptographic proof without exposing it.</p>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div class="input-group">
+              <label class="input-label" for="zkp-passphrase">Prove knowledge of Wallet Master Password</label>
+              <input type="password" class="input-field" id="zkp-passphrase" placeholder="Provide master password to generate proof" disabled>
+            </div>
+
+            <button class="btn btn-primary" id="btn-generate-zkp" disabled>
+              Generate Cryptographic Zero-Knowledge Proof
+            </button>
+
+            <div id="zkp-results-container" style="display: none; flex-direction: column; gap: 1rem;">
+              <div class="zkp-box">
+                <span class="input-label">1. Prover Commitment (Hash of random nonce r)</span>
+                <div class="zkp-proof-data" id="zkp-commitment">Commitment: 0x93284a...</div>
+              </div>
+              <div class="zkp-box">
+                <span class="input-label">2. Verifier Challenge (Random network seed)</span>
+                <div class="zkp-proof-data" id="zkp-challenge">Challenge: 0x3b89ef...</div>
+              </div>
+              <div class="zkp-box">
+                <span class="input-label">3. Calculated ZK Proof (Fiat-Shamir hash evaluation)</span>
+                <div class="zkp-proof-data" id="zkp-proof">Proof Payload: 0xf37190b...</div>
+              </div>
+              
+              <button class="btn btn-secure" id="btn-verify-zkp">
+                Verify ZK Proof (Zero Trust Validation)
+              </button>
+
+              <div id="zkp-status-alert" style="padding: 1rem; border-radius: 8px; font-weight: 600; text-align: center; font-size: 0.9rem;">
+                Verification complete: Signature valid. Zero secrets exposed.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Post-Quantum KEM (Lattice Cryptography) panel -->
+        <div class="glass-card" style="max-width: 700px; margin: 0 auto;">
+          <h2 class="card-title" style="color: var(--clr-accent);">
+            Ring-LWE Key Encapsulation Mechanism (Defeating HNDL)
+          </h2>
+          <p class="card-subtitle">
+            Encrypt and encapsulate a ledger session backup key using lattice-based Ring-LWE mathematics ($R_q = \mathbb{Z}_{q}[x]/(x^N + 1)$ with $N=128$, $q=257$). This ensures that a quantum computer intercepts only quantum-resistant cyphertext.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <!-- Step 1: Generate Ring-LWE Keypair -->
+            <div>
+              <button class="btn btn-primary" id="btn-generate-lwe-keys">
+                Generate Ring-LWE Post-Quantum Keypair
+              </button>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.75rem;">
+                <div class="input-group">
+                  <span class="input-label">Lattice Public Key vector b(x) (128 mod 257)</span>
+                  <div class="zkp-proof-data" id="lwe-pubkey-display" style="height: 65px; overflow-y: auto;">Click generate...</div>
+                </div>
+                <div class="input-group">
+                  <span class="input-label">Lattice Private Key vector s(x) (coefficients {-1,0,1})</span>
+                  <div class="zkp-proof-data" id="lwe-privkey-display" style="height: 65px; overflow-y: auto;">Click generate...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 2: Encapsulate shared secret -->
+            <div id="lwe-encapsulation-step" style="display: none; flex-direction: column; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;">
+              <div class="input-group">
+                <label class="input-label" for="lwe-secret-input">Secret Session Backup Key (Hex String)</label>
+                <input type="text" class="input-field mono" id="lwe-secret-input" value="a9c8b746d5f0e1329a2b3c4d5e6f7a8b" readonly>
+              </div>
+              <button class="btn btn-secure" id="btn-lwe-encapsulate">
+                Encapsulate Key (Ring-LWE Encryption)
+              </button>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;" id="lwe-ciphertext-fields">
+                <div class="input-group">
+                  <span class="input-label">Ciphertext Poly c1(x)</span>
+                  <div class="zkp-proof-data" id="lwe-c1-display" style="height: 55px; overflow-y: auto;">Encrypting...</div>
+                </div>
+                <div class="input-group">
+                  <span class="input-label">Ciphertext Poly c2(x)</span>
+                  <div class="zkp-proof-data" id="lwe-c2-display" style="height: 55px; overflow-y: auto;">Encrypting...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Step 3: Decapsulate and verify -->
+            <div id="lwe-decapsulation-step" style="display: none; flex-direction: column; gap: 0.75rem; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 1rem;">
+              <button class="btn btn-primary" id="btn-lwe-decapsulate">
+                Decapsulate Key (Lattice Decryption)
+              </button>
+              <div class="input-group">
+                <span class="input-label">Decapsulated Session Backup Key (Recovered Polynomial Bits)</span>
+                <div class="zkp-proof-data" id="lwe-recovered-key" style="font-size: 0.85rem; font-weight: bold; color: var(--clr-secure);">Recovering...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Live Terminal Logger Panel (Always visible at bottom of content) -->
+      <footer class="glass-card" style="margin-top: auto; padding: 1rem; border-color: rgba(255,255,255,0.06); background: rgba(8,12,20,0.65);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: bold;">
+            Aegis Cryptographic Client Logs (Zero-Trust Local Audit)
+          </div>
+          <button class="btn" id="btn-clear-logs" style="font-size: 0.65rem; padding: 0.2rem 0.5rem; background: transparent; color: var(--text-secondary);">Clear Terminal</button>
+        </div>
+        <div class="logger-console" id="log-console-area">
+          <!-- Real-time logs populate here -->
+        </div>
+      </footer>
+    </main>
+
+    <!-- Right Sidebar: Sentry AI Assistant -->
+    <aside class="sentry-panel">
+      <div class="sentry-header">
+        <div class="sentry-avatar">AI</div>
+        <div class="sentry-title">
+          <span class="name">Sentry AI Agent</span>
+          <span class="status">
+            <span class="status-dot"></span>
+            Online (Local Threat Scanning)
+          </span>
+        </div>
+      </div>
+
+      <!-- Chat area -->
+      <div class="sentry-chat" id="sentry-chat-box">
+        <div class="msg sentry">
+          <div class="msg-header">Sentry AI Agent • System Status</div>
+          Welcome user. I am Sentry AI. I audit local Solidity code, verify Zero-Knowledge Proof validations, and evaluate yield optimizations. Ask me about zero-trust setups, smart contracts vulnerability scanning, or key management.
+        </div>
+      </div>
+
+      <!-- Chat form -->
+      <form class="sentry-input-area" id="sentry-chat-form">
+        <input type="text" class="sentry-input" id="sentry-input-field" placeholder="Ask Sentry AI..." autocomplete="off">
+        <button type="submit" class="sentry-send-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </form>
+    </aside>
+
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
